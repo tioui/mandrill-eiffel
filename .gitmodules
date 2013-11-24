@@ -1,0 +1,6 @@
+[submodule "Eiffel_Base64"]
+	path = Eiffel_Base64
+	url = https://github.com/tioui/Eiffel_Base64.git
+[submodule "json"]
+	path = json
+	url = https://github.com/eiffelhub/json.git
