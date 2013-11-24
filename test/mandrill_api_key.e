@@ -10,5 +10,7 @@ feature {NONE} -- The Key
 
 	Api_key:READABLE_STRING_GENERAL
 		once
-			Result:="Your Key!"
+			Result:="Your Key"
 		end
+
+end
