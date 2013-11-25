@@ -38,16 +38,8 @@ feature {NONE} -- Any
 
     api_key_key: JSON_STRING
         once
-            create Result.make_json ("api_key")
+            create Result.make_json ("key")
         end
-
-
-feature {NONE} -- Initialisation
-
---	Account_Info_file_name:READABLE_STRING_GENERAL
---		once
---			Result:="get_account_info.json"
---		end
 
 feature {NONE} -- Send Message
 
@@ -268,6 +260,28 @@ feature {NONE} -- Send Message
     Send_at_key: JSON_STRING
         once
             create Result.make_json ("send_at")
+        end
+
+feature {NONE} -- Send Message Result
+
+	Status_key: JSON_STRING
+        once
+            create Result.make_json ("status")
+        end
+
+    Code_key: JSON_STRING
+        once
+            create Result.make_json ("code")
+        end
+
+    Id_key: JSON_STRING
+        once
+            create Result.make_json ("_id")
+        end
+
+    Reject_reason_key: JSON_STRING
+        once
+            create Result.make_json ("reject_reason")
         end
 
 end

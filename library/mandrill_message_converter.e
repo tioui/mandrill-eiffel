@@ -18,31 +18,15 @@ feature -- Conversion
     to_json (a_object: MANDRILL_MESSAGE): JSON_OBJECT
         do
             Result:=Precursor(a_object)
---            Result.put (json.value (a_object.uid), Uid_key)
---            Result.put (arguments_json_object (a_object), Arguments_key)
+            Result.put (message_json_object (a_object), Message_key)
+            put_boolean_in_json(Result, a_object.is_async,Async_key)
+			put_argument_in_json(Result, a_object.ip_pool,Ip_pool_key)
+			if attached a_object.must_send_at as la_send_at then
+				Result.put (put_date_in_json (la_send_at), send_at_key)
+			end
         end
 
 feature    {NONE} -- Implementation
-
-	arguments_json_object(a_object: MANDRILL_MESSAGE): JSON_OBJECT
-		do
-			create Result.make
-            Result.put (message_json_object (a_object), Message_key)
---            put_argument_in_json(Result,a_object.template,Template_key)
---            put_argument_in_json(Result,a_object.recipient_override,Recipient_override_key)
---            if not a_object.recipients.is_empty then
---            	Result.put (recipient_json_object(a_object.recipients), Recipients_key)
---            end
---            if not a_object.headers.is_empty then
---            	Result.put (list_type_value_to_json(a_object.headers), Headers_key)
---            end
---			if not a_object.variables.is_empty then
---				Result.put (list_type_value_to_json(a_object.variables), Variables_key)
---			end
---			if not a_object.attachments.is_empty then
---				Result.put (attachments_json_object(a_object.attachments), Attachments_type_key)
---			end
-		end
 
 	put_argument_in_json(a_json:JSON_OBJECT;a_value:READABLE_STRING_GENERAL;a_key:JSON_STRING)
 		do
@@ -68,8 +52,12 @@ feature    {NONE} -- Implementation
 			put_argument_in_json(Result, a_object.subject,Subject_key)
 			put_argument_in_json(Result, a_object.from_email,From_email_key)
 			put_argument_in_json(Result, a_object.from_name,From_name_key)
-			Result.put (to_json_object (a_object), To_key)
-			Result.put (key_value_chain_json_object (a_object.headers), Headers_key)
+			if not a_object.recipients.is_empty then
+				Result.put (to_json_object (a_object), To_key)
+			end
+			if not a_object.headers.is_empty then
+				Result.put (key_value_chain_json_object (a_object.headers), Headers_key)
+			end
 			put_boolean_in_json(Result, a_object.is_important,Important_key)
 			put_boolean_in_json(Result, a_object.must_track_opens,Track_opens_key)
 			put_boolean_in_json(Result, a_object.must_generate_html,Auto_html_key)
@@ -82,22 +70,34 @@ feature    {NONE} -- Implementation
 			put_argument_in_json(Result, a_object.signing_domain,Signing_domain_key)
 			put_argument_in_json(Result, a_object.return_path_domain,Return_path_domain_key)
 			put_boolean_in_json(Result, a_object.must_merge_tags,Merge_key)
-			Result.put (vars_json_object (a_object.global_merge_vars), Global_merge_vars_key)
-			Result.put (merge_vars_json_object (a_object), Merge_vars_key)
-			Result.put (string_chain_to_json_array (a_object.tags), Tags_key)
-			put_argument_in_json(Result, a_object.sub_account,Subaccount_key)
-			Result.put (string_chain_to_json_array (a_object.google_analytics_domains), Google_analytics_domains_key)
-			Result.put (string_chain_to_json_array (a_object.google_analytics_campaigns), Google_analytics_campaign_key)
-			Result.put (key_value_chain_json_object (a_object.metadata), Metadata_key)
-			Result.put (recipient_metadata_json_object (a_object), Recipient_metadata_key)
-			Result.put (attachments_json_object (a_object.attachments), Attachments_key)
-			Result.put (attachments_json_object (a_object.embedded_images), Images_key)
-			put_boolean_in_json(Result, a_object.is_async,Async_key)
-			put_argument_in_json(Result, a_object.ip_pool,Ip_pool_key)
-			if attached a_object.must_send_at as la_send_at then
-				Result.put (put_date_in_json (la_send_at), send_at_key)
+			if not a_object.global_merge_vars.is_empty then
+				Result.put (vars_json_object (a_object.global_merge_vars), Global_merge_vars_key)
 			end
-
+			if not a_object.merge_vars.is_empty then
+				Result.put (merge_vars_json_object (a_object), Merge_vars_key)
+			end
+			if not a_object.tags.is_empty then
+				Result.put (string_chain_to_json_array (a_object.tags), Tags_key)
+			end
+			put_argument_in_json(Result, a_object.sub_account,Subaccount_key)
+			if not a_object.google_analytics_domains.is_empty then
+				Result.put (string_chain_to_json_array (a_object.google_analytics_domains), Google_analytics_domains_key)
+			end
+			if not a_object.google_analytics_campaigns.is_empty then
+				Result.put (string_chain_to_json_array (a_object.google_analytics_campaigns), Google_analytics_campaign_key)
+			end
+			if not a_object.metadata.is_empty then
+				Result.put (key_value_chain_json_object (a_object.metadata), Metadata_key)
+			end
+			if not a_object.recipient_metadata.is_empty then
+				Result.put (recipient_metadata_json_object (a_object), Recipient_metadata_key)
+			end
+			if not a_object.attachments.is_empty then
+				Result.put (attachments_json_object (a_object.attachments), Attachments_key)
+			end
+			if not a_object.embedded_images.is_empty then
+				Result.put (attachments_json_object (a_object.embedded_images), Images_key)
+			end
 		end
 
 	to_json_object(a_object: MANDRILL_MESSAGE): JSON_ARRAY
@@ -213,79 +213,4 @@ feature    {NONE} -- Implementation
 			create Result.make_json (l_date)
 		end
 
-
-
---	content_json_object(a_object: MANDRILL_MESSAGE): JSON_OBJECT
---		do
---			create Result.make
---			put_argument_in_json(Result, a_object.text_message, Text_message_key)
---			put_argument_in_json(Result, a_object.html_message, Html_message_key)
---		end
-
---	attachments_json_object(a_attachments:LIST[TUPLE[file_name, content_type, content:READABLE_STRING_GENERAL]]): JSON_OBJECT
---		local
---			l_attachment_object:JSON_OBJECT
---			l_key:JSON_STRING
---		do
---			create Result.make
---			across
---				a_attachments as ic_attachment
---			loop
---				create l_attachment_object.make
---				l_attachment_object.put (json.value (ic_attachment.item.content_type), Content_type_key)
---				l_attachment_object.put (json.value (ic_attachment.item.content), Content_key)
---				create l_key.make_json (ic_attachment.item.file_name.as_string_8)
---				Result.put (l_attachment_object, l_key)
---			end
---		end
-
-
---	recipient_json_object(a_recipients:LIST[TUPLE[recipient:READABLE_STRING_GENERAL;variables:detachable LIST[TUPLE[name,value:READABLE_STRING_GENERAL]]]]): JSON_OBJECT
---		local
---			l_key:JSON_STRING
---		do
---			create Result.make
---			across
---				a_recipients as ic_recipients
---			loop
---				create l_key.make_json (ic_recipients.item.recipient.as_string_8)
---				if attached ic_recipients.item.variables as la_variables then
---					Result.put (list_type_value_to_json(la_variables), l_key)
---				else
---					Result.put (json.value (Void), l_key)
---				end
-
---			end
---		end
-
---	list_json_object(a_list:LIST[READABLE_STRING_GENERAL]): JSON_VALUE
---    	local
---    		l_list_converter:JSON_LIST_CONVERTER
---		do
---			if attached {LINKED_LIST[READABLE_STRING_GENERAL]} a_list then
---            	create {JSON_LINKED_LIST_CONVERTER} l_list_converter.make
---            else
---            	create {JSON_ARRAYED_LIST_CONVERTER} l_list_converter.make
---            end
---            if attached l_list_converter.to_json (a_list) as al_json_value then
---            	Result:=al_json_value
---            else
---            	create {JSON_NULL} Result
---            	check False end
---            end
-
---		end
-
---	list_type_value_to_json(a_list:LIST[TUPLE[type,value:READABLE_STRING_GENERAL]]): JSON_OBJECT
---		local
---			l_key:JSON_STRING
---		do
---			create Result.make
---			across
---				a_list as ic_list
---			loop
---				create l_key.make_json (ic_list.item.type.as_string_8 )
---				Result.put (json.value (ic_list.item.value), l_key)
---			end
---		end
 end

@@ -398,10 +398,14 @@ feature -- Access
 		end
 
 	send
+		local
+			l_converter:MANDRILL_MESSAGE_RESULT_CONVERTER
 		do
-			print(json_request+"%N")
+--			print(json_request+"%N")
 			send_request
-			print(json_result+"%N")
+			create l_converter
+			request_result:=l_converter.from_json (result_code, json_result)
+--			print(json_result+"%N")
 		end
 
 	json_request:READABLE_STRING_GENERAL
@@ -414,6 +418,8 @@ feature -- Access
 			Result:=l_json_object.representation
 
 		end
+
+	request_result:detachable MANDRILL_MESSAGE_RESULT
 
 
 feature {NONE} -- Implementation

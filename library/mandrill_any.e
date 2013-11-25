@@ -56,6 +56,8 @@ feature -- Access
 
 	json_result:READABLE_STRING_GENERAL
 
+	result_code:NATURAL_16
+
 feature{NONE} -- Implementation
 
 	send_request
@@ -64,8 +66,10 @@ feature{NONE} -- Implementation
 			l_curl_handle, l_content_type:POINTER
 			l_result: INTEGER
 			l_result_string:CURL_STRING
+			l_result_code:CELL[detachable INTEGER_32_REF]
 		do
-
+			create l_result_code.put (0)
+			l_result_code.replace (Void)
 			json_result:=""
 			if is_secure then
 				l_address:="https"
@@ -83,6 +87,13 @@ feature{NONE} -- Implementation
 				l_content_type:=curl.slist_append (l_content_type, "Content-type: application/json")
 				curl_easy.setopt_slist (l_curl_handle, {CURL_OPT_CONSTANTS}.curlopt_httpheader, l_content_type)
 				l_result := curl_easy.perform (l_curl_handle)
+				check l_result>=0 end
+				create l_result_code.put (0)
+				l_result:=curl_easy.getinfo (l_curl_handle, {CURL_INFO_CONSTANTS}.Curlinfo_response_code, l_result_code)
+				check l_result=0 end
+				if attached l_result_code.item as l_code then
+					result_code:=l_code.item.to_natural_16
+				end
 				json_result:=l_result_string
 				curl_easy.cleanup (l_curl_handle)
 			end
@@ -104,6 +115,6 @@ feature{NONE} -- Implementation
 		deferred
 		end
 
-	
+
 
 end

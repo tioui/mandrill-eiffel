@@ -8,7 +8,7 @@
 		<setting name="console_application" value="true"/>
 		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
 		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
-		<library name="mandrill_eiffel_safe" location="..\library\mandrill_eiffel-safe.ecf"/>
+		<library name="mandrill_eiffel_safe" location="..\library\mandrill_eiffel-safe.ecf" readonly="false"/>
 		<cluster name="mandrill_test" location=".\" recursive="true">
 			<file_rule>
 				<exclude>/EIFGENs$</exclude>

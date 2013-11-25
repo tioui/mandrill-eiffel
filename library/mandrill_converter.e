@@ -19,11 +19,6 @@ feature -- Conversion
             Result.put (json.value (a_object.api_key), Api_key_key)
 		end
 
-	from_json(a_json:JSON_OBJECT):detachable MANDRILL_ANY
-		do
-			Result := Void
-		end
-
 
 
 end
