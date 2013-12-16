@@ -199,8 +199,8 @@ feature    {NONE} -- Implementation
 			loop
 				create l_attachments.make
 				l_attachments.put (json.value (la_attachments.item.content_type), Type_key)
-				l_attachments.put (json.value (la_attachments.item.file_name), Name_key)
-				l_attachments.put (json.value (la_attachments.item.base64_encoded_content), Content_key)
+				l_attachments.put (json.value (la_attachments.item.file_name.as_string_32), Name_key)
+				l_attachments.put (json.value (la_attachments.item.base64_encoded_content.as_string_8), Content_key)
 				Result.add (l_attachments)
 			end
 		end

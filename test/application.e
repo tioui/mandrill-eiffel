@@ -28,6 +28,7 @@ feature {NONE} -- Initialization
 			l_message.from_email:=From_email
 			l_message.from_name:=From_name
 			l_message.add_recipient (To_name, To_email, false, false)
+			l_message.attach_file ("test.png")
 			l_message.send
 			if attached l_message.request_result as la_result then
 				if la_result.has_error then
